@@ -63,12 +63,13 @@ def login_user():
 
     # 사용자가 제공한 아이디를 가진 사용자가 데이터베이스에 있는지 확인
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM users WHERE userId = %s", (user_id,))
+    cur.execute("SELECT * FROM users WHERE userId = %s and userPwd = %s", (user_id, encrypt_password(user_pwd)))
     user = cur.fetchone()
     cur.close()
 
+
     # 사용자가 데이터베이스에 존재하고 비밀번호가 일치하는지 확인
-    if user and encrypt_password(user_pwd):
+    if user != None:
         return jsonify({'success': True, 'message': '로그인 성공'})
     else:
         return jsonify({'success': False, 'message': '아이디 또는 비밀번호가 잘못되었습니다.'})
