@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="../lib/signage.base.js"></script>
+    <title>키오스크</title>
+</head>
+<body>
+    <header>사용자 키오스크</header>
+    <div id="menu">
+        <div onclick="change(0)" class="menu-item active">커피</div>
+        <div onclick="change(1)" class="menu-item">논카페인</div>
+        <div onclick="change(2)" class="menu-item">디저트</div>
+    </div> 
+    <div id="panelContainer" class="panel-container">
+        <div class="panel">
+            <img src="../res/Caffeine/drink1.jpg" alt="Panel 1 Image" onclick="orderDrink(2)">
+            <p>아이스티</p>
+        </div>
+    </div>
+    
+    <button style="display: none" onclick="getTestService()">테스트 버튼</button>
+    <button style="display: none" id='test'>테스트</button>
+</body>
+<script>
+    // JavaScript here
+    let orderDrink = function(drink) {
+        let data = new FormData();
+        data.append("order", drink);
+
+        fetch('/kiosk_page/order', { // service.py에서 할당
+            method: 'POST',
+            body: data
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // 응답 데이터 처리
+        })
+        .catch(error => {
+            console.error('에러 발생:', error);
+        });
+    }
+
+
+    // fetch를 사용하여 /image_count 엔드포인트로 GET 요청을 보내는 함수
+    function loadImageCount(category) {
+        fetch(`/image_count?name=${category}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(`${category} image count:`, data.count);
+            createPanels(data.count, category);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    
+
+    // 
+    function change(menu) {
+        let name = ["Caffeine", "NonCaffeine", "Desert"];
+        let panels = document.querySelectorAll('.panel-container .panel img');
+
+        // 모든 메뉴 아이템의 'active' 클래스를 제거하고 클릭된 항목에 추가합니다.
+        let menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach(item => item.classList.remove('active'));
+        menuItems[menu].classList.add('active');
+        //------------------------------------------------------------
+        loadImageCount(name[menu])
+
+
+
+    }
+
+    let createPanels = function(drinkCount, category) {
+        let panelContainer = document.getElementById('panelContainer');
+        panelContainer.innerHTML = '';
+
+        for(let i = 1; i <= drinkCount; i++) {
+            let panel = document.createElement('div');
+            panel.classList.add('panel');
+
+            let img = document.createElement('img');
+            img.src = `../res/${category}/drink${i}.jpg`;
+            img.alt = `Panel ${i} Image`;
+            img.onclick = function() { orderDrink(i); };
+
+            let p = document.createElement('p');
+            p.textContent = `음료 ${i}`;
+
+            panel.appendChild(img);
+            panel.appendChild(p);
+
+            panelContainer.appendChild(panel);
+        }
+    }
+
+    window.onload = function() {
+        loadImageCount('Caffeine')
+    }
+
+    // 테스트 코드, 참고용
+    let getTestService = function() {
+        let data = new FormData(); // 데이터 저장소 생성
+        data.append("name", "kiosk_test"); // 데이터 담기 
+        POST("test", data, function(resp) {
+            // 1. test라는 데이터를 서버단에 실행
+            // 2. data를 담아서 보냄
+            // 3. response 될 때 function 실행
+            console.log(resp + ':' + resp.data);
+            let n = resp.data.output;
+            document.querySelector('#test').innerHTML = n;
+        });
+    }
+</script>
+</html>

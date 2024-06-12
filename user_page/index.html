@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../lib/signage.base.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <title>관리자 페이지</title>
+</head>
+<body>
+    <header>관리자 페이지</header>
+    <div class='panel-container' id="order_list"></div>
+</body>
+<script>
+    // javascript
+    let getOrder = function(drink){
+        let data = new FormData();
+        data.append("none", "none");
+        POST("getOrder", data, function(resp){ 
+            // console.log(resp + ':' + resp.data);
+            document.querySelector('#order_list').innerHTML = resp.data.output
+        });
+    }
+
+    setInterval(() => {
+        getOrder();
+    }, 1000);
+</script>
+</html>
