@@ -59,45 +59,47 @@
     
 
     // 
-    function change(menu) {
-        let name = ["Caffeine", "NonCaffeine", "Desert"];
-        let panels = document.querySelectorAll('.panel-container .panel img');
-
+    function change(kind) {
+        
         // 모든 메뉴 아이템의 'active' 클래스를 제거하고 클릭된 항목에 추가합니다.
         let menuItems = document.querySelectorAll('.menu-item');
         menuItems.forEach(item => item.classList.remove('active'));
-        menuItems[menu].classList.add('active');
+        menuItems[kind].classList.add('active');
         //------------------------------------------------------------
-        loadImageCount(name[menu])
+        fetchMenus(kind)
 
-    }
-
-    let createPanels = function(drinkCount, category) {
-        let panelContainer = document.getElementById('panelContainer');
-        panelContainer.innerHTML = '';
-
-        for(let i = 1; i <= drinkCount; i++) {
-            let panel = document.createElement('div');
-            panel.classList.add('panel');
-
-            let img = document.createElement('img');
-            img.src = `../res/${category}/drink${i}.jpg`;
-            img.alt = `Panel ${i} Image`;
-            img.onclick = function() { orderDrink(i); };
-
-            let p = document.createElement('p');
-            p.textContent = `음료 ${i}`;
-
-            panel.appendChild(img);
-            panel.appendChild(p);
-
-            panelContainer.appendChild(panel);
-        }
     }
 
     window.onload = function() {
-        loadImageCount('Caffeine')
+        fetchMenus(0);
     }
+
+    // 서버에서 메뉴 데이터를 가져오는 함수
+    function fetchMenus(kind) {
+        const NAME = ['Caffeine', 'NonCaffeine', 'Desert'];
+        
+        fetch('/get_menus') // Flask 애플리케이션의 라우트 주소에 맞게 수정
+        .then(response => response.json())
+        .then(data => {
+            const panelContainer = document.getElementById('panelContainer');
+            panelContainer.innerHTML = ''; // 패널 컨테이너 초기화
+
+            data.forEach(menu => {
+                if (menu[1] === kind) { // kind 값과 menu[1] 값이 일치하는 경우에만 패널 생성
+                    let row = `<div class="panel">
+                        <img src="../res/${NAME[menu[1]]}/drink${menu[3]}.jpg" alt="Panel ${menu[3]} Image" onclick="orderDrink(${menu[3]})">
+                        <p>${menu[2]}</p>
+                    </div>`;
+                    panelContainer.innerHTML += row;
+                }
+            });
+        })
+        .catch(error => console.error('메뉴 가져오기 오류:', error));
+    }
+
+
+
+
 
     // 테스트 코드, 참고용
     let getTestService = function() {
