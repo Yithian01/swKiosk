@@ -4,23 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Start Page</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* 최소 높이 설정 */
+            background-color: #f5f6fa; /* 전체 배경색 */
+        }
+    
+        
+        #main-container {
+            width: 800px;
+            height: 80vh;
+            max-width: 100%; /* 최대 너비 설정 */
+            background-color: #ffffff; /* 추가할 div의 배경색 */
+            padding: 20px; /* 내부 여백 */
+            border-radius: 10px; /* 모서리 둥글게 */
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1); /* 그림자 효과 */
+        }
+
+        #LOGO {
+            text-align: center; /* 로고 이미지 중앙 정렬 */
+            margin-bottom: 340px; /* 로고와 링크 사이 여백 조정 */
+        }
+
+        #links-container {
+            text-align: center; /* 링크 가운데 정렬 */
+
+        }
+
+        a {
+            display: block;
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-decoration: none;
+            color: #333; /* 링크 텍스트 색상 */
+            background-color: #ff8c00; /* 링크 배경색 */
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease; /* 배경색 변경 효과 */
+        }
+
+        a:hover {
+            background-color: #e25822; /* 호버 시 배경색 변경 */
+        }
+        
+
+        #adminLink {
+            position: fixed; /* 고정 위치 */
+            bottom: 20px; /* 아래 여백 */
+            right: 20px; /* 오른쪽 여백 */
+            font-size: 16px; /* 작은 글꼴 크기 */
+            background-color: #ddd; /* 배경색 */
+            padding: 8px 16px; /* 내부 여백 */
+            border-radius: 5px; /* 모서리 둥글게 */
+            text-decoration: none; /* 텍스트 밑줄 제거 */
+            color: #333; /* 글자 색상 */
+            z-index: 999; /* 다른 요소 위에 배치 */
+        }
+    </style>
 </head>
 <body>
-    <a href="./kiosk_page/index.html">사용자 키오스크</a>
+    <div id="main-container">
+        <div id="LOGO">
+            <img src="./res/Other/cmlogo.png" alt="logo">
+        </div>
+        <div id="links-container">
+            <a id="kioskPage" href="./kiosk_page/index.html">주문하기</a>
+        </div>
+    </div>
+
     <a id="adminLink" href="./user_page/index.html">관리자 페이지</a>
+
+    <script>
+        const isLogIn = false;
+        
+        // 관리자 페이지 링크
+        const adminLink = document.getElementById('adminLink');
+        adminLink.addEventListener('click', function(event) {
+            if (!isLogIn) {
+                event.preventDefault(); // 링크 이동을 취소합니다.
+                window.location.href = './login_page/index.html'; // 로그인 페이지로 이동합니다.
+            }
+        });
+    </script>
 </body>
-<script>
-    const isLogIn = false;
-    
-    // 관리자 페이지 링크
-    const adminLink = document.getElementById('adminLink');
-    adminLink.addEventListener('click', function(event) {
-        if (!isLogIn) {
-            event.preventDefault(); // 링크 이동을 취소합니다.
-            window.location.href = './login_page/index.html'; // 로그인 페이지로 이동합니다.
-        }
-    });
-
-
-</script>
 </html>

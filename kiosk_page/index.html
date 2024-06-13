@@ -14,66 +14,268 @@
         <div onclick="change(1)" class="menu-item">논카페인</div>
         <div onclick="change(2)" class="menu-item">디저트</div>
     </div> 
-    <div id="panelContainer" class="panel-container">
-        <div class="panel">
-            <img src="../res/Caffeine/drink1.jpg" alt="Panel 1 Image" onclick="orderDrink(2)">
-            <p>아이스티</p>
+    <div id="panelWrapper">
+        <div id="panelContainer" class="panel-container">
+            <!-- 패널들이 동적으로 생성됩니다 -->
         </div>
     </div>
     
-    <button style="display: none" onclick="getTestService()">테스트 버튼</button>
-    <button style="display: none" id='test'>테스트</button>
+    <div id="shoppingCart">
+        <div id="cartItemsContainer">
+            <div id = "cartList">
+                <ul id="cartItems">
+                    <!-- 장바구니 아이템이 동적으로 추가됩니다 -->
+                </ul>
+            </div>
+        </div>
+
+
+        <div id="paymentContainer">
+            <p id="totalAmount">총 금액: 0원</p>
+            <div id="buttonBox">
+                <button id="payButton" onclick="order()" >결제하기</button>
+                <button id="backButton" onclick="goBack()">취소하기</button>
+
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- 모달 창 -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modalContent">
+                <div>
+                    <h3 id="titleInfo">상품명: </h3>
+
+                    <h3 >커피 상태</h3>
+                    <label>
+                        <input type="radio" name="temperature" value="hot"> 핫
+                    </label>
+                    <label>
+                        <input type="radio" name="temperature" value="ice"> 아이스
+                    </label>
+                    <h3 id="NutInfo">영양정보: </h3>
+                    <p id="caffeineInfo">카페인: </p>
+                    <p id="proteinInfo">단백질: </p>
+                    <p id="carboInfo">탄수화물: </p>
+                    <p id="fatInfo">지방: </p>
+                    <p id="kalInfo">칼로리: </p>
+                    <label class="counter"  for="quantity">수량:</label>
+                    <input type="number" id="quantity" name="quantity" min="1" value="1" onchange="updatePrice()">
+                    <h3 id="priceInfo">가격: </h3>
+                    <p id="originprice" class="hidden"></p>
+                    <button class="addBtn" onclick="addToCart()">추가하기</button>
+                    <p id="menuId" class="hidden"></p>
+                    <p id="menuTitle" class="hidden"></p>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
 </body>
 <script>
     // JavaScript here
-    let orderDrink = function(drink) {
-        let data = new FormData();
-        data.append("order", drink);
+    // 모달 열기 함수
+    function openModal(drinkId) {
+        const modal = document.getElementById('modal');
 
-        fetch('/kiosk_page/order', { // service.py에서 할당
+
+        const titleInfo = document.getElementById('titleInfo');        
+        const caffeineInfo = document.getElementById('caffeineInfo');        
+        const proteinInfo = document.getElementById('proteinInfo');        
+        const carboInfo = document.getElementById('carboInfo');        
+        const fatInfo = document.getElementById('fatInfo');        
+        const kalInfo = document.getElementById('kalInfo');        
+        const priceInfo = document.getElementById('priceInfo');     
+        
+        const originprice = document.getElementById('originprice'); 
+        const menuId = document.getElementById('menuId'); 
+        const menuTitle = document.getElementById('menuTitle'); 
+        
+        menuId.textContent = drinkId;
+        
+        titleInfo.textContent = "상품명: " + document.getElementById(`title_${drinkId}`).textContent;
+        caffeineInfo.textContent = "카페인: " + document.getElementById(`caffeine_${drinkId}`).textContent + "(mg)";
+        proteinInfo.textContent = "단백질: " + document.getElementById(`protein_${drinkId}`).textContent + "(g)";
+        carboInfo.textContent = "탄수화물: " + document.getElementById(`carbo_${drinkId}`).textContent + "(g)";
+        fatInfo.textContent = "지방: " + document.getElementById(`fat_${drinkId}`).textContent + "(g)";
+        kalInfo.textContent = "칼로리: " + document.getElementById(`kal_${drinkId}`).textContent + "(kcal)";
+        priceInfo.textContent = "가격: " + document.getElementById(`price_${drinkId}`).textContent + "(원)";
+        originprice.textContent = document.getElementById(`price_${drinkId}`).textContent;
+        menuTitle.textContent = document.getElementById(`title_${drinkId}`).textContent;
+
+        modal.style.display = 'block';
+    }
+
+    // 모달 닫기 함수
+    function closeModal() {
+        const modal = document.getElementById('modal');
+        document.getElementById('quantity').value = 1;
+        modal.style.display = 'none';
+    }
+    
+    
+    let orderDrink = function(id) {  
+        //사진을 누르면 뜨게끔
+        openModal(id);
+    }
+
+
+
+    // 수량 변경에 따라 가격 업데이트 함수
+    function updatePrice() {
+        originprice = parseInt(document.getElementById('originprice').textContent);
+        const quantity = parseInt(document.getElementById('quantity').value); // 현재 수량 가져오기
+        const totalPrice = quantity * originprice; // 수량 * 단일 가격으로 총 가격 계산
+        document.getElementById('priceInfo').textContent = `가격: ${totalPrice}원`; // 총 가격 표시
+    }
+
+
+    // 장바구니에 상품 추가 함수
+    function addToCart() {
+        const menuId = document.getElementById('menuId').textContent; // 상품 아이디
+        const menuTitle = document.getElementById('menuTitle').textContent; // 상품명 가져오기
+        const quantity = parseInt(document.getElementById('quantity').value); // 수량 가져오기
+        const originprice = parseInt(document.getElementById('originprice').textContent); // 원래 가격 가져오기
+        const totalPrice = quantity * originprice; // 총 가격 계산
+
+        // 장바구니 아이템 생성
+        const cartItems = document.getElementById('cartItems');
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `
+            <div id="qc_${menuId}">
+                <span id="qcTitle${menuId}">${menuTitle}</span>
+                <input type="number" id="qcNumber${menuId}" value="${quantity}" min="1" >
+                <button class="quantity-btn" onclick="decreaseQuantity(${menuId})">-</button>
+                <button class="quantity-btn" onclick="increaseQuantity(${menuId})">+</button>
+                <span id="qcPrice${menuId}">${totalPrice} 원</span>
+                <p class="hidden" id="originPrice${menuId}">${originprice}</p>
+                <button class="delete-btn" onclick="removeCartItem(${menuId})">삭제</button>
+            </div>
+        `;
+        cartItems.appendChild(listItem);
+
+        updateTotalAmount(totalPrice); // 총 금액 업데이트
+        closeModal(); // 모달 닫기
+    }
+    //------- 여기까지 모달창 이벤트 ---------
+    //------------여기서부터는 장바구니 이벤트 -------------------
+    // 수량 감소 함수
+    function decreaseQuantity(menuId) {
+        const quantityInput = document.getElementById(`qcNumber${menuId}`);
+        let quantity = parseInt(quantityInput.value);
+        const originPrice = parseInt(document.getElementById(`originPrice${menuId}`).textContent);
+
+        if (quantity > 1) {
+            quantity -= 1;
+            quantityInput.value = quantity;
+
+            // 가격 업데이트 로직
+            const totalPrice = quantity * originPrice;
+            document.getElementById(`qcPrice${menuId}`).textContent = `${totalPrice} 원`;
+            updateTotalAmount(-originPrice); // 총 금액 업데이트 (감소)
+        }
+    }
+
+    // 수량 증가 함수
+    function increaseQuantity(menuId) {
+        const quantityInput = document.getElementById(`qcNumber${menuId}`);
+        let quantity = parseInt(quantityInput.value);
+        const originPrice = parseInt(document.getElementById(`originPrice${menuId}`).textContent);
+
+        if (quantity < 50) {
+            quantity += 1;
+            quantityInput.value = quantity;
+
+            // 가격 업데이트 로직
+            const totalPrice = quantity * originPrice;
+            document.getElementById(`qcPrice${menuId}`).textContent = `${totalPrice} 원`;
+            updateTotalAmount(originPrice); // 총 금액 업데이트 (감소)
+        }
+    }
+
+
+    // 총 금액 업데이트 함수
+    function updateTotalAmount(price) {
+        const totalAmountElement = document.getElementById('totalAmount');
+        const currentTotal = parseInt(totalAmountElement.textContent.replace(/[^0-9]/g, ''));
+        const newTotal = currentTotal + price;
+        totalAmountElement.textContent = `총 금액: ${newTotal}원`;
+    }
+
+    // 삭제 함수
+    function removeCartItem(menuId) {
+        const cartItem = document.getElementById(`qc_${menuId}`);
+        const originPrice = parseInt(document.getElementById(`originPrice${menuId}`).textContent);
+        const totalPrice = parseInt(document.getElementById(`qcPrice${menuId}`).textContent);
+    
+        // 장바구니에서 해당 상품 삭제
+        cartItem.remove();
+        // 총 금액 업데이트 (삭제된 상품의 가격을 차감)
+        updateTotalAmount(-totalPrice);
+    }
+
+
+    //주문 로그 남기기
+    function order(){
+        const cartItems = document.querySelectorAll('#cartItems > li');
+        const orderData = [];
+
+        cartItems.forEach(item => {
+        const menuId = item.querySelector('div').id.split('_')[1];
+        const quantity = item.querySelector('input').value;
+        orderData.push({
+            menuId: parseInt(menuId),
+            quan: parseInt(quantity)
+            });
+        });
+
+        fetch('/kiosk_page/order', {
             method: 'POST',
-            body: data
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body:  JSON.stringify(orderData)
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data); // 응답 데이터 처리
+        .then(response => {
+            if (response.ok) {
+                alert('결제 성공!');
+                // 장바구니 내역을 모두 지우기
+                document.getElementById('cartItems').innerHTML = '';
+                document.getElementById('totalAmount').textContent = '총 금액: 0원';
+
+
+            } else {
+                throw new Error('서버 응답 실패');
+            }
         })
         .catch(error => {
             console.error('에러 발생:', error);
+            alert('결제 오류!!');
         });
-    }
+
+    };
 
 
-    // fetch를 사용하여 /image_count 엔드포인트로 GET 요청을 보내는 함수
-    function loadImageCount(category) {
-        fetch(`/image_count?name=${category}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log(`${category} image count:`, data.count);
-            createPanels(data.count, category);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }
-    
 
-    // 
+    //---------------------------------------------------------
+    // 모든 메뉴 아이템의 'active' 클래스를 제거하고 클릭된 항목에 추가합니다.
     function change(kind) {
-        
-        // 모든 메뉴 아이템의 'active' 클래스를 제거하고 클릭된 항목에 추가합니다.
         let menuItems = document.querySelectorAll('.menu-item');
         menuItems.forEach(item => item.classList.remove('active'));
         menuItems[kind].classList.add('active');
-        //------------------------------------------------------------
-        fetchMenus(kind)
-
+        fetchMenus(kind);
     }
 
     window.onload = function() {
         fetchMenus(0);
     }
-
+    
     // 서버에서 메뉴 데이터를 가져오는 함수
     function fetchMenus(kind) {
         const NAME = ['Caffeine', 'NonCaffeine', 'Desert'];
@@ -87,8 +289,16 @@
             data.forEach(menu => {
                 if (menu[1] === kind) { // kind 값과 menu[1] 값이 일치하는 경우에만 패널 생성
                     let row = `<div class="panel">
-                        <img src="../res/${NAME[menu[1]]}/drink${menu[3]}.jpg" alt="Panel ${menu[3]} Image" onclick="orderDrink(${menu[3]})">
+                        <img src="../res/${NAME[menu[1]]}/drink${menu[3]}.jpg" alt="Panel ${menu[3]} Image" onclick="orderDrink(${menu[0]})">
+                        <p class="hidden" id="title_${menu[0]}">${menu[2]}</p>
+                        <p class="hidden" id="caffeine_${menu[0]}">${menu[5]}</p>
+                        <p class="hidden" id="protein_${menu[0]}">${menu[6]}</p>
+                        <p class="hidden" id="carbo_${menu[0]}">${menu[7]}</p>
+                        <p class="hidden" id="fat_${menu[0]}">${menu[8]}</p>
+                        <p class="hidden" id="kal_${menu[0]}">${menu[9]}</p>
+                        <p class="hidden" id="price_${menu[0]}">${menu[4]}</p>
                         <p>${menu[2]}</p>
+                        
                     </div>`;
                     panelContainer.innerHTML += row;
                 }
@@ -97,22 +307,11 @@
         .catch(error => console.error('메뉴 가져오기 오류:', error));
     }
 
-
-
-
-
-    // 테스트 코드, 참고용
-    let getTestService = function() {
-        let data = new FormData(); // 데이터 저장소 생성
-        data.append("name", "kiosk_test"); // 데이터 담기 
-        POST("test", data, function(resp) {
-            // 1. test라는 데이터를 서버단에 실행
-            // 2. data를 담아서 보냄
-            // 3. response 될 때 function 실행
-            console.log(resp + ':' + resp.data);
-            let n = resp.data.output;
-            document.querySelector('#test').innerHTML = n;
-        });
+    // 뒤로 가기 함수
+    function goBack() {
+            window.history.back();
     }
+
+   
 </script>
 </html>

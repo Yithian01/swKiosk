@@ -4,59 +4,64 @@
     src: local(※), url(NanumGothic.woff) format("woff");
 }
 
+/* 기존 CSS와 추가될 CSS */
 body {
+    font-family: 'NG', sans-serif;
     line-height: 1;
-    font-family: NG, sans-serif;
     -webkit-text-size-adjust: none;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    font: normal NG;
-    padding: 0;
     margin: 0;
+    padding: 0;
     width: 100%;
     height: 100%;
     background-color: #f5f6fa;
 }
 
-a:hover,
-a:visited,
-a:link,
-a:active {
+.hidden {
+    display: none;
+}
+
+a:hover, a:visited, a:link, a:active {
     text-decoration: none;
 }
 
-html,
-body {
-    padding: 0;
+html, body {
     margin: 0;
+    padding: 0;
     width: 100%;
     height: 100%;
     background-color: #f5f6fa;
 }
 
-
-.menu-item.active {
-    background-color: #635340; /* 선택된 메뉴 항목의 색상을 변경 */
-}
-
-
 #menu {
-    margin: 0 78px;
+    margin: 0 auto;
+    max-width: 800px;
+    height: 40px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-}
-
-#menu > div {
-    flex: 1;
-    text-align: center;
     background-color: #ff8c00;
-    padding: 10px;
     border: 1px solid #ffffff;
     font-size: 23px;
+    box-sizing: border-box;
+}
+
+#menu > .menu-item {
+    flex: 1;
+    text-align: center;
+    cursor: pointer;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#menu > .menu-item.active {
+    background-color: #dcec8c;
 }
 
 header {
-    background-color: dodgerblue;
-    line-height: 40px;
+    background-color: #ff8c00;
     color: white;
     text-align: center;
     font-weight: bold;
@@ -65,32 +70,203 @@ header {
     margin: 0 auto;
     max-width: 800px;
     height: 40px;
+    line-height: 40px;
+}
+
+#panelWrapper {
+    background-color: #e2eabb;
+    padding: 5px;
+    max-width: 780px;
+    margin: 20px auto;
+    height: 700px; /* 최대 높이 설정 */
+    overflow-y: auto; /* 넘칠 경우 스크롤 추가 */
 }
 
 .panel-container {
-    display: flex;
-    flex-wrap: wrap; /* Flexbox에서 줄 바꿈 허용 */
-    max-width: 780px;
-    margin: 0 auto;
-    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4열 레이아웃 설정 */
     gap: 20px;
 }
 
 .panel {
-    width: calc(33.333% - 20px); /* 3열 레이아웃을 위한 너비 설정 */
     border: 1px solid #ccc;
     text-align: center;
+    box-sizing: border-box;
 }
 
 .panel img {
     width: 100%;
-    height: 200px;
+    height: 130px;
     display: block;
 }
 
 .panel p {
-    background-color: blue;
-    color: white;
+    background-color: rgb(200, 184, 69);
+    color: rgb(0, 0, 0);
     margin: 0;
     padding: 10px;
+    font-weight: bold;
 }
+
+/* 장바구니 스타일링 */
+#shoppingCart {
+    max-width: 780px;
+    margin: 20px auto;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #ccc; 
+    box-sizing: border-box;
+    height: 300px; /* 장바구니 높이 설정 */
+    display: flex; /* Flexbox로 변경하여 가로 정렬 */
+    justify-content: space-between; /* 두 컨테이너 사이 공간 확보 */
+    gap: 20px;
+}
+
+#cartItemsContainer {
+    width: 60%; /* 왼쪽 박스의 너비 */
+    height: 270px; /* 장바구니 아이템 리스트의 최대 높이 설정 */
+    overflow-y: auto; /* 넘칠 경우 스크롤 추가 */
+    background-color: #e2eabb;
+}
+
+#paymentContainer {
+    background-color: #e2eabb;
+    width: 35%; /* 오른쪽 박스의 너비 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-weight: bold;
+}
+
+#shoppingCart h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+#cartItems {
+    list-style-type: none;
+    padding: 0;
+    max-height: 250px; /* 장바구니 아이템 리스트의 최대 높이 설정 */
+    overflow-y: auto; /* 넘칠 경우 스크롤 추가 */
+}
+
+#cartItems li {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+#totalAmount {
+    margin-left: 10px;
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+#buttonBox{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+#payButton {
+    font-size: 20px;
+    padding: 10px;
+    background-color: #ff8c00;
+    color: rgb(0, 0, 0);
+    border: none;
+    cursor: pointer;
+    border: 2px solid #ffffff; /* 테두리 추가 */
+    border-bottom: none; /* 하단 테두리 없애기 */
+}
+
+#backButton{
+    font-size: 20px;
+    padding: 10px;
+    background-color: #473019;
+    color: rgb(255, 255, 255);
+    border: none;
+    cursor: pointer;
+    border: 2px solid #ffffff; /* 테두리 추가 */
+}
+
+
+
+/*-----------------*/
+/* 모달 스타일 */
+.modal {
+    display: none; /* 기본적으로 숨김 */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5); /* 반투명 배경 */
+    overflow: auto;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 500px; /* 너비 500px로 조정 */
+    height: 500px; /* 높이 500px로 조정 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#modalContent {
+    padding: 10px;
+    position: absolute;
+    left: 10px; /* 모달 상단에서의 간격 조정 */
+    top: 15px; /* 모달 우측에서의 간격 조정 */
+}
+
+
+.close {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    top: 10px; /* 모달 상단에서의 간격 조정 */
+    right: 15px; /* 모달 우측에서의 간격 조정 */
+}
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+#NutInfo{
+    margin-top: 30px;
+}
+
+#kalInfo{
+    margin-bottom: 40px;
+}
+input[type="number"] {
+    font-size: 20px; /* 원하는 크기로 조정 */
+    width: 80px; /* 원하는 너비로 조정 */
+}
+
+
+.addBtn{
+    font-size: 20px;
+    padding: 10px;
+    background-color: #ff8c00;
+    color: rgb(0, 0, 0);
+    border: none;
+    cursor: pointer;
+    border: 2px solid #000000; /* 테두리 추가 */
+}
+
+/*------------------아래 장바구니 꾸미기-----------------*/

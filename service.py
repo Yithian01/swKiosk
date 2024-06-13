@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, jsonify
 from flask_mysqldb import MySQL
 from json import JSONEncoder
+from datetime import datetime
 import numpy, hashlib, os, logging, json, base64
 
 
@@ -227,13 +228,29 @@ def update_menu(menu_id):
 ## 주문
 @app.route('/kiosk_page/order', methods=['POST'])
 def order():
-    logDisable(False) ## 로그 저장
 
-    order_menu = request.form["order"]
-    fileSave(order_menu)
-    output = {"output": "none"}
-    output = json.dumps(output, cls=NumpyArrayEncoder)
-    return outputJSON(json.loads(output), "ok")
+    try:
+        data = request.json
+
+        for item in data:
+            menuId = item['menuId']
+            quan = item['quan']
+            content = {menuId : quan}
+            fileSave(content)
+
+
+            # 로그 데이터베이스 입력
+            cur = mysql.connection.cursor()
+            cur.execute("INSERT INTO sales (menuId, quan) VALUES (%s, %s)", (menuId, quan))
+            mysql.connection.commit()
+            cur.close()
+
+
+        return jsonify({"message": "주문이 성공적으로 되었습니다."}), 201
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 
 
@@ -258,9 +275,19 @@ def test():
 
 def fileSave(content):
     path = './data'
-    f = open(f'{path}/{content}.txt', 'w')
-    f.write(f'{content} + 111')
-    f.close()
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    # 현재 시간 가져오기
+    current_time = datetime.now().strftime('%Y%m%d_%H%M%S')
+    menu_id, quan = list(content.items())[0]
+
+    # 안전한 파일 이름 생성
+    file_name = f'{current_time}_{menu_id}_{quan}.txt'
+    file_path = os.path.join(path, file_name)
+
+    with open(file_path, 'w') as f:
+        f.write(f'{file_name}')
 
 def logDisable(n):
     log = logging.getLogger('werkzeug')
