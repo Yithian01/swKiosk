@@ -46,34 +46,10 @@ header {
     height: 40px;
 }
 
-#back-button {
-    text-align: center;
-    margin-top: 10px;
-}
-
 .panel-container {
     display: flex;
     justify-content: space-between; /* 가로로 공간을 최대한 분배하여 배치 */
     max-width: 780px;
     margin: 0 auto;
     margin-top: 20px;
-}
-
-.panel {
-    width: calc(33.33% - 10px); /* 3등분을 위해 33.33%로 설정, 여백은 gap 속성으로 조절 */
-    border: 1px solid #ccc;
-    text-align: center;
-}
-
-.panel img {
-    width: 100%;
-    height: 200px;
-    display: block;
-}
-
-.panel p {
-    background-color: blue;
-    color: white;
-    margin: 0;
-    padding: 10px;
 }

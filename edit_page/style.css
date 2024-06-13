@@ -1,0 +1,108 @@
+@charset "utf-8";
+@font-face {
+    font-family: NG;
+    src: local(※), url(NanumGothic.woff) format("woff");
+}
+
+body {
+    font-family: NG, sans-serif;
+    background-color: #f5f6fa;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header {
+    background-color: dodgerblue;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    font-size: 23px;
+    padding: 10px 0;
+    width: 100%;
+    max-width: 800px;
+}
+
+#menu-table-container {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    justify-content: center;
+}
+
+#menu-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#menu-table th,
+#menu-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+#menu-table th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+#menu-table td button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#menu-table td button:hover {
+    background-color: #0056b3;
+}
+
+#update-form {
+    display: none;
+    width: 80%;
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 5px;
+}
+
+#update-form h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+#menu-update-form label {
+    display: inline-block;
+    width: 100px;
+    margin-bottom: 10px;
+}
+
+#menu-update-form input[type="text"],
+#menu-update-form input[type="number"] {
+    width: calc(100% - 120px);
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-bottom: 10px;
+}
+
+#menu-update-form button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#menu-update-form button:hover {
+    background-color: #0056b3;
+}

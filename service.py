@@ -137,6 +137,89 @@ def addManu():
             os.remove(filePath)
         return jsonify({'success': False, 'message': 'Failed to add menu', 'error': str(e)}), 500
     
+#--------------------------------------------------
+#메뉴 수정하기 기능
+# 메뉴 목록 API
+@app.route('/get_menus')
+def get_menus():
+    try:
+        cur = mysql.connection.cursor()
+        sql = "SELECT * FROM menus"
+        cur.execute(sql)
+        menus = cur.fetchall()
+        cur.close()
+        return jsonify(menus)
+    
+    except Exception as e:
+        return f'메뉴 불러오기 중 오류가 발생했습니다: {str(e)}'
+
+
+
+@app.route('/delete/<int:menu_id>/<int:kind>/<int:img>', methods=['DELETE'])
+def delete_menu(menu_id, kind, img):
+    MENU = ['Caffeine', 'NonCaffeine', 'Desert']
+    imageDirectory = f'./res/{MENU[kind]}' 
+    fileName = f'drink{img}.jpg'
+
+    try:
+        # 데이터베이스 트랜잭션 시작
+        cur = mysql.connection.cursor()
+
+        # 메뉴 데이터 삭제
+        sql_delete_menu = "DELETE FROM menus WHERE id = %s"
+        cur.execute(sql_delete_menu, (menu_id,))
+        
+        # 이미지 파일 삭제
+        file_path = os.path.join(imageDirectory, fileName)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            print(f'{fileName} 파일이 성공적으로 삭제되었습니다.')
+        else:
+            print(f'{fileName} 파일이 존재하지 않습니다.')
+
+        # 데이터베이스 트랜잭션 커밋
+        mysql.connection.commit()
+
+        # 데이터베이스 커서 닫기
+        cur.close()
+
+        return '메뉴가 성공적으로 삭제되었습니다.'
+    except Exception as e:
+        # 트랜잭션 롤백
+        mysql.connection.rollback()
+        return f'메뉴 삭제 중 오류가 발생했습니다: {str(e)}'
+
+#-----------------------------------
+#메뉴 수정
+@app.route('/update/<int:menu_id>', methods=['PUT'])
+def update_menu(menu_id):
+    try:
+        # 클라이언트로부터 전송된 데이터 가져오기
+        menu_data = request.form
+        name = menu_data.get("name")
+        price = int(menu_data.get("price"))
+        caffeine = int(menu_data.get("caffeine"))
+        protein = int(menu_data.get("protein"))
+        carbo = int(menu_data.get("carbo"))
+        fat = int(menu_data.get("fat"))
+        kal = int(menu_data.get("calories"))
+
+        # 메뉴 데이터베이스 업데이트
+        cur = mysql.connection.cursor()
+        cur.execute("""
+            UPDATE menus
+            SET title = %s, price = %s, caffeine = %s, protein = %s, carbo = %s, fat = %s, kal = %s
+            WHERE id = %s
+        """, (name, price, caffeine, protein, carbo, fat, kal, menu_id))
+        mysql.connection.commit()
+        cur.close()
+
+        # 업데이트된 메뉴 데이터를 클라이언트에 응답
+        return jsonify({"message": "메뉴가 성공적으로 수정되었습니다."}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 
 

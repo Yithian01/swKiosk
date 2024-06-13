@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>메뉴 수정하기</title>
+</head>
+<body>
+    <header>메뉴 수정하기</header>
+
+    <div id="back-button">
+        <button onclick="goBack()">뒤로 가기</button>
+    </div>
+    
+    <div id="menu-table-container">
+        <table id="menu-table">
+            <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>이름</th>
+                    <th>가격</th>
+                    <th>카페인</th>
+                    <th>단백질</th>
+                    <th>탄수화물</th>
+                    <th>지방</th>
+                    <th>칼로리</th>
+                    <th>삭제</th>
+                    <th>수정</th>
+                </tr>
+            </thead>
+            <tbody id="menu-table-body">
+                <!-- 여기에 JavaScript로 추가될 테이블 행들 -->
+            </tbody>
+        </table>
+    </div>
+
+    <div id="update-form" style="display: none;">
+        <h3>메뉴 수정 폼</h3>
+        <form id="menu-update-form">
+            <input type="hidden" id="update-menu-id" name="menuId">
+            <label for="update-name">이름:</label>
+            <input type="text" id="update-name" name="name"><br><br>
+            <label for="update-price">가격:</label>
+            <input type="number" id="update-price" name="price"><br><br>
+            <label for="update-caffeine">카페인:</label>
+            <input type="number" id="update-caffeine" name="caffeine"><br><br>
+            <label for="update-protein">단백질:</label>
+            <input type="number" id="update-protein" name="protein"><br><br>
+            <label for="update-carbo">탄수화물:</label>
+            <input type="number" id="update-carbo" name="carbo"><br><br>
+            <label for="update-fat">지방:</label>
+            <input type="number" id="update-fat" name="fat"><br><br>
+            <label for="update-calories">칼로리:</label>
+            <input type="number" id="update-calories" name="calories"><br><br>
+            <button type="button" onclick="submitUpdate()">수정</button>
+            <button type="button" onclick="cancelUpdate()">취소</button>
+        </form>
+    </div>
+
+    <script>
+        let currentUpdateMenuId = null;
+
+        // 페이지 로드 후 실행할 함수
+        window.onload = function() {
+            fetchMenus();
+        };
+
+        // 뒤로 가기 함수
+        function goBack() {
+            window.history.back();
+        }
+
+        // 서버에서 메뉴 데이터를 가져오는 함수
+        function fetchMenus() {
+            fetch('/get_menus') // Flask 애플리케이션의 라우트 주소에 맞게 수정
+                .then(response => response.json())
+                .then(data => {
+                    const menuTableBody = document.getElementById('menu-table-body');
+                    menuTableBody.innerHTML = ''; // 테이블 초기화
+                    
+                    data.forEach( menu => {
+                        let row = `<tr>
+                            <td>${menu[0]}</td>
+                            <td>${menu[2]}</td>
+                            <td>${menu[4]}</td>
+                            <td>${menu[5]}</td>
+                            <td>${menu[6]}</td>
+                            <td>${menu[7]}</td>
+                            <td>${menu[8]}</td>
+                            <td>${menu[9]}</td>
+                            <td>
+                                <button onclick="deleteMenu(${menu[0]}, '${menu[1]}', '${menu[3]}')">삭제</button>
+                            </td>
+                            <td>
+                                <button onclick="openUpdateForm(${menu[0]}, '${menu[2]}', ${menu[4]}, ${menu[5]}, ${menu[6]}, ${menu[7]}, ${menu[8]}, ${menu[9]})">수정</button>
+                            </td>
+                        </tr>`;
+                        menuTableBody.innerHTML += row;
+                    });
+                })
+                .catch(error => console.error('메뉴 가져오기 오류:', error));
+        }
+
+        // 삭제 함수
+        function deleteMenu(menuId, kind, img) {
+            fetch(`/delete/${menuId}/${kind}/${img}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('메뉴 삭제 실패');
+                }
+                fetchMenus(); // 삭제 후 테이블 갱신
+            })
+            .catch(error => console.error('메뉴 삭제 오류:', error));
+        }
+
+        // 수정 폼 열기
+        function openUpdateForm(menuId, name, price, caffeine, protein, carbo, fat, calories) {
+            currentUpdateMenuId = menuId;
+            document.getElementById('update-menu-id').value = menuId;
+            document.getElementById('update-name').value = name;
+            document.getElementById('update-price').value = price;
+            document.getElementById('update-caffeine').value = caffeine;
+            document.getElementById('update-protein').value = protein;
+            document.getElementById('update-carbo').value = carbo;
+            document.getElementById('update-fat').value = fat;
+            document.getElementById('update-calories').value = calories;
+            document.getElementById('update-form').style.display = 'block';
+        }
+
+        // 수정 폼 제출
+        function submitUpdate() {
+            let form = document.getElementById('menu-update-form');
+            let formData = new FormData(form);
+
+            fetch(`/update/${currentUpdateMenuId}`, {
+                method: 'PUT',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('메뉴 수정 실패');
+                }
+                fetchMenus(); // 수정 후 테이블 갱신
+                closeUpdateForm();
+            })
+            .catch(error => console.error('메뉴 수정 오류:', error));
+        }
+
+        // 수정 폼 닫기
+        function cancelUpdate() {
+            closeUpdateForm();
+        }
+
+        function closeUpdateForm() {
+            document.getElementById('update-form').style.display = 'none';
+            currentUpdateMenuId = null;
+        }
+    </script>
+
+</body>
+</html>
