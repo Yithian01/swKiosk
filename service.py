@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, jsonify
 from flask_mysqldb import MySQL
 from json import JSONEncoder
-import numpy, hashlib, os, logging, json
+import numpy, hashlib, os, logging, json, base64
 
 
 
@@ -93,36 +93,48 @@ def addManu():
         carbo = int(data['carbohydrates'])
         fat = int(data['fat'])
         kal = int(data['calories'])
+        imageCount = 0
+        fileName = None
         
+
+        if 'imgFile' in data:
+            imgData = data['imgFile']
+            imgByte = base64.b64decode(imgData)
+            imageDirectory = f'./res/{MENU[kind]}'  # 이미지가 있는 디렉토리 경로
+            imageFiles = [f for f in os.listdir(imageDirectory) if os.path.isfile(os.path.join(imageDirectory, f))]
+            imageCount = len(imageFiles) + 1
+            
+            fileName = f'drink{imageCount}.jpg'
+            filePath = os.path.join(imageDirectory, fileName)
+
+            with open(filePath, 'wb') as file:
+                file.write(imgByte)
+        else:
+            print('이미지 파일 낫 파운드')
+            
+
+
         # Print request data to the terminal
-        print(f"Received Data: {data}")
+        #print(f"Received Data: {data}")
+        print("imageCount", imageCount)
 
-    except:
-        return jsonify({'success': False, 'message': 'Menu added successfully'}), 201
-    
-    
-    # 이미지 파일 저장 경로
-    image_directory = f'./res/{MENU[kind]}'  # 이미지가 있는 디렉토리 경로
-    image_files = [f for f in os.listdir(image_directory) if os.path.isfile(os.path.join(image_directory, f))]
-    image_count = len(image_files) + 1
-
-    new_filename = f'drink{image_count}.jpg'
-    new_filepath = os.path.join(image_directory, new_filename)
-
-
-    #img.save(new_filepath)
-    # 사용자가 제공한 아이디를 가진 사용자가 데이터베이스에 있는지 확인
-    try:
-        
+        # menus 테이블에 추가
         cur = mysql.connection.cursor()
         cur.execute(
-            "INSERT INTO menus (kind, title, img, price, caffeine, protein, carbo, fat, kal) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", 
-            (kind, title, image_count, price, caffeine, protein, carbo, fat, kal)
+            "INSERT INTO menus (kind, title, img, price, caffeine, protein, carbo, fat, kal) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);",
+            (kind, title, imageCount, price, caffeine, protein, carbo, fat, kal)
         )
         mysql.connection.commit()
         cur.close()
+
+
+
         return jsonify({'success': True, 'message': 'Menu added successfully'}), 201
+
     except Exception as e:
+        print('경고 경고')
+        if fileName and os.path.exists(filePath):
+            os.remove(filePath)
         return jsonify({'success': False, 'message': 'Failed to add menu', 'error': str(e)}), 500
     
 
