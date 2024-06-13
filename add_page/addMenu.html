@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../lib/signage.base.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <title>메뉴추가</title>
+</head>
+<body>
+    <h2>메뉴 추가</h2>
+    <form id="addMenuForm">
+        <div class="form-group">
+            <label for="menuImage">이미지:</label>
+            <input type="file" id="menuImage" name="imgFile" accept="image/*">
+        </div>
+        <div class="form-group">
+            <label for="menuKind">종류:</label>
+            <select id="menuKind" name="kind">
+                <option value=0>카페인</option>
+                <option value=1>논카페인</option>
+                <option value="2">디저트</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="menuTitle">이름:</label>
+            <input type="text" id="menuTitle" name="title" required>
+        </div>
+        <div class="form-group">
+            <label for="menuPrice">가격:</label>
+            <input type="number" id="menuPrice" name="price" required>
+        </div>
+        <div class="form-group">
+            <label for="menuCaffeine">카페인 함량 (mg):</label>
+            <input type="number" id="menuCaffeine" name="caffeine" required>
+        </div>
+        <div class="form-group">
+            <label for="menuProtein">단백질 함량 (g):</label>
+            <input type="number" id="menuProtein" name="protein" required>
+        </div>
+        <div class="form-group">
+            <label for="menuCarbohydrates">탄수화물 함량 (g):</label>
+            <input type="number" id="menuCarbohydrates" name="carbohydrates" required>
+        </div>
+        <div class="form-group">
+            <label for="menuFat">지방 함량 (g):</label>
+            <input type="number" id="menuFat" name="fat" required>
+        </div>
+        <div class="form-group">
+            <label for="menuCalories">칼로리 (kcal):</label>
+            <input type="number" id="menuCalories" name="calories" required>
+        </div>
+        <button id="add" type="submit">메뉴 추가</button>
+    </form>
+    <div id="message"></div>
+</body>
+<script>
+
+    document.getElementById('add').addEventListener('click', function(event){
+        event.preventDefault();
+
+        const imgFile = document.getElementById('menuImage').files[0];
+
+        const kind = document.getElementById('menuKind').value;
+        const title = document.getElementById('menuTitle').value;
+        const price = document.getElementById('menuPrice').value;
+        const caffeine = document.getElementById('menuCaffeine').value;
+        const protein = document.getElementById('menuProtein').value;
+        const carbohydrates = document.getElementById('menuCarbohydrates').value;
+        const fat = document.getElementById('menuFat').value;
+        const calories = document.getElementById('menuCalories').value;
+        // Ensure calories is a number
+        const caloriesValue = calories === "" ? 0 : calories;
+        
+
+        fetch('/addMenu', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                
+                kind : kind,
+                title : title,
+                price : price,
+                caffeine : caffeine,
+                protein : protein,
+                carbohydrates : carbohydrates,
+                fat : fat,
+                calories : caloriesValue
+            })
+        }).then(response => {
+            if(response.ok){
+                alert('메뉴 추가 성공!');
+                document.getElementById('message').textContent = '메뉴 추가에 성공하였습니다.';
+
+            }else{
+                alert('메뉴 추가 실패!');
+                document.getElementById('message').textContent = '메뉴 추가에 실패하였습니다.';
+            }
+        })
+        .catch(error => {
+            console.log('에러 발생: ', error);
+            document.getElementById('message').textContent = '메뉴 추가에 실패하였습니다.';
+            alert('메뉴추가 실패');
+        });
+
+    });
+    
+</script>
+</html>

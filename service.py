@@ -11,6 +11,11 @@ app = Flask(
     static_folder='./', ## 정적 폴더 위치, default로 index.html을 불러옴
 )
 
+
+#이미지 저장경로
+UPLOAD_FOLDER = '/res/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 # MySQL configurations
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
@@ -26,13 +31,10 @@ def home():
     return app.send_static_file("./index.html")
 
 
-
-
-
 ################################################################################
 ## 여기에 필요한 기능 코드 작성
 
-## DB기능
+## DB기능 - 로그인
 def encrypt_password(password):
     # 비밀번호를 SHA-256 해시 함수를 사용하여 암호화
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
@@ -40,7 +42,7 @@ def encrypt_password(password):
 
 
 @app.route('/signUp', methods=['POST'])
-def register_user():
+def registerUser():
     data = request.json
     user_id = data['userId']
     user_pwd = data['userPwd']
@@ -56,7 +58,7 @@ def register_user():
 
 
 @app.route('/login', methods=['POST'])
-def login_user():
+def loginUser():
     data = request.json
     user_id = data['userId']
     user_pwd = data['userPwd']
@@ -74,6 +76,55 @@ def login_user():
     else:
         return jsonify({'success': False, 'message': '아이디 또는 비밀번호가 잘못되었습니다.'})
 
+
+#------------------------------------
+## DB기능 - 메뉴 추가
+@app.route('/addMenu', methods = ['POST'])
+def addManu():
+    MENU = ['Caffeine', 'NonCaffeine', 'Desert']
+
+    try:
+        data = request.json
+        kind = int(data['kind'])
+        title = data['title']
+        price = int(data['price'])
+        caffeine = int(data['caffeine'])
+        protein = int(data['protein'])
+        carbo = int(data['carbohydrates'])
+        fat = int(data['fat'])
+        kal = int(data['calories'])
+        
+        # Print request data to the terminal
+        print(f"Received Data: {data}")
+
+    except:
+        return jsonify({'success': False, 'message': 'Menu added successfully'}), 201
+    
+    
+    # 이미지 파일 저장 경로
+    image_directory = f'./res/{MENU[kind]}'  # 이미지가 있는 디렉토리 경로
+    image_files = [f for f in os.listdir(image_directory) if os.path.isfile(os.path.join(image_directory, f))]
+    image_count = len(image_files) + 1
+
+    new_filename = f'drink{image_count}.jpg'
+    new_filepath = os.path.join(image_directory, new_filename)
+
+
+    #img.save(new_filepath)
+    # 사용자가 제공한 아이디를 가진 사용자가 데이터베이스에 있는지 확인
+    try:
+        
+        cur = mysql.connection.cursor()
+        cur.execute(
+            "INSERT INTO menus (kind, title, img, price, caffeine, protein, carbo, fat, kal) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", 
+            (kind, title, image_count, price, caffeine, protein, carbo, fat, kal)
+        )
+        mysql.connection.commit()
+        cur.close()
+        return jsonify({'success': True, 'message': 'Menu added successfully'}), 201
+    except Exception as e:
+        return jsonify({'success': False, 'message': 'Failed to add menu', 'error': str(e)}), 500
+    
 
 
 
