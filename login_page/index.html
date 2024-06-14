@@ -20,7 +20,7 @@
         <input type="password" id="userPwd" name="user_pwd">
       </div>
       <button id="login" type="button">로그인</button>
-      <button id="signUp" type="button">회원가입</button>
+      <button id="signUp" onclick="goBack()" type="button">뒤로 가기</button>
     </form>
 
     <div id="message"></div>
@@ -101,5 +101,11 @@
       alert('회원가입에 실패하였습니다.');
     });
   });
+
+
+  // 뒤로 가기 함수
+  function goBack() {
+            window.history.back();
+        }
 </script>
 </html>

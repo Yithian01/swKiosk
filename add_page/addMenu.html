@@ -8,51 +8,56 @@
     <title>메뉴추가</title>
 </head>
 <body>
-    <h2>메뉴 추가</h2>
-    <form id="addMenuForm">
-        <div class="form-group">
-            <label for="menuImage">이미지:</label>
-            <input type="file" id="menuImage" name="imgFile" accept="image/*">
-        </div>
-        <div class="form-group">
-            <label for="menuKind">종류:</label>
-            <select id="menuKind" name="kind">
-                <option value=0>카페인</option>
-                <option value=1>논카페인</option>
-                <option value="2">디저트</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="menuTitle">이름:</label>
-            <input type="text" id="menuTitle" name="title" required>
-        </div>
-        <div class="form-group">
-            <label for="menuPrice">가격:</label>
-            <input type="number" id="menuPrice" name="price" required>
-        </div>
-        <div class="form-group">
-            <label for="menuCaffeine">카페인 함량 (mg):</label>
-            <input type="number" id="menuCaffeine" name="caffeine" required>
-        </div>
-        <div class="form-group">
-            <label for="menuProtein">단백질 함량 (g):</label>
-            <input type="number" id="menuProtein" name="protein" required>
-        </div>
-        <div class="form-group">
-            <label for="menuCarbohydrates">탄수화물 함량 (g):</label>
-            <input type="number" id="menuCarbohydrates" name="carbohydrates" required>
-        </div>
-        <div class="form-group">
-            <label for="menuFat">지방 함량 (g):</label>
-            <input type="number" id="menuFat" name="fat" required>
-        </div>
-        <div class="form-group">
-            <label for="menuCalories">칼로리 (kcal):</label>
-            <input type="number" id="menuCalories" name="calories" required>
-        </div>
-        <button id="add" type="submit">메뉴 추가</button>
-    </form>
-    <div id="message"></div>
+    <div id="main-container">
+        <h2>메뉴 추가</h2>
+        <form id="addMenuForm">
+            <div class="form-group">
+                <label for="menuImage">이미지:</label>
+                <input type="file" id="menuImage" name="imgFile" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label for="menuKind">종류:</label>
+                <select id="menuKind" name="kind">
+                    <option value=0>카페인</option>
+                    <option value=1>논카페인</option>
+                    <option value="2">디저트</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="menuTitle">이름:</label>
+                <input type="text" id="menuTitle" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="menuPrice">가격:</label>
+                <input type="number" id="menuPrice" name="price" required>
+            </div>
+            <div class="form-group">
+                <label for="menuCaffeine">카페인 함량 (mg):</label>
+                <input type="number" id="menuCaffeine" name="caffeine" required>
+            </div>
+            <div class="form-group">
+                <label for="menuProtein">단백질 함량 (g):</label>
+                <input type="number" id="menuProtein" name="protein" required>
+            </div>
+            <div class="form-group">
+                <label for="menuCarbohydrates">탄수화물 함량 (g):</label>
+                <input type="number" id="menuCarbohydrates" name="carbohydrates" required>
+            </div>
+            <div class="form-group">
+                <label for="menuFat">지방 함량 (g):</label>
+                <input type="number" id="menuFat" name="fat" required>
+            </div>
+            <div class="form-group">
+                <label for="menuCalories">칼로리 (kcal):</label>
+                <input type="number" id="menuCalories" name="calories" required>
+            </div>
+            <button id="add" type="submit">메뉴 추가</button>
+            <button id="back" onclick="goBack()">뒤로 가기</button>
+        </form>
+        <div id="message"></div>
+    
+
+    </div>
 </body>
 <script>
 
@@ -101,7 +106,7 @@
                 if(response.ok){
                     alert('메뉴 추가 성공!');
                     document.getElementById('message').textContent = '메뉴 추가에 성공하였습니다.';
-
+                    window.location.href = './../user_page/index.html';
                 }else{
                     console.log(imgFile);
                     alert('메뉴 추가 실패!');
@@ -118,5 +123,10 @@
         reader.readAsDataURL(imgFile);
     });
     
+
+    // 뒤로 가기 함수
+    function goBack() {
+        window.location.href = './../user_page/index.html';
+    }
 </script>
 </html>

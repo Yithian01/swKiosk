@@ -6,11 +6,13 @@
 
 body {
     font-family: NG, sans-serif;
-    background-color: #f5f6fa;
+    background-color: #f5f6fa;  
     margin: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center; /* 화면 중앙 정렬을 위한 추가 */
+    min-height: 100vh; /* 화면 전체 높이에 맞게 설정 */
 }
 
 header {
@@ -65,7 +67,7 @@ header {
     display: none;
     width: 80%;
     max-width: 800px;
-    margin: 20px auto;
+    margin: 20px auto; /* 수직 가운데 정렬을 위해 margin을 auto로 설정 */
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
@@ -105,10 +107,7 @@ header {
 
 #menu-update-form button:hover {
     background-color: #45a049;
-
 }
-
-
 
 #back-button {
     width: 800px;
@@ -124,9 +123,9 @@ header {
     margin: 0 auto;
     max-width: 800px;
     height: 40px;
-  }
-  
-  #back-button button {
+}
+
+#back-button button {
     background-color: #ff8c00;
     color: white;
     border: none;
@@ -134,8 +133,8 @@ header {
     border-radius: 3px;
     cursor: pointer;
     transition: all 0.3s ease;
-  }
-  
-  #back-button button:hover {
+}
+
+#back-button button:hover {
     background-color: #45a049;
-  }
+}

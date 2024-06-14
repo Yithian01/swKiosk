@@ -19,13 +19,14 @@ body {
   padding: 30px;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  width: 350px;
+  width: 800px;
   height: 80vh;
+  text-align: center;
 }
 
 #LOGO{
-  align-self: center;
-  margin-bottom: 240px;
+  margin-top: 100px;
+  margin-bottom: 180px;
   
 }
   
@@ -40,7 +41,7 @@ label {
   
 input[type="text"],
 input[type="password"] {
-  width: 100%;
+  width: 35%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 3px;

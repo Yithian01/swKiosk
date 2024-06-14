@@ -32,20 +32,22 @@ body {
   height: 100%;
   background-color: #f5f6fa;
 }
-
 header {
   background-color: #ff8c00;
-  line-height: 40px;
   color: white;
   text-align: center;
+  padding-top: calc(100px- 50%);
   font-weight: bold;
   font-size: 23px;
-  position: relative;
-  margin: 0 auto;
+  padding: 20px 0; /* 상단과 하단에 패딩을 주어 세로 중앙 정렬 */
+  width: 100%;
   max-width: 800px;
-  height: 40px;
+  height: 60px; /* 헤더의 높이 설정 */
+  display: flex;
+  align-items: center; /* 세로 방향에서 중앙 정렬 */
+  justify-content: center; /* 가로 방향에서 중앙 정렬 */
+  margin: 20px auto; /* 가운데 정렬을 위한 마진 설정 */
 }
-
 #back-button {
   text-align: center;
   margin-top: 10px;
