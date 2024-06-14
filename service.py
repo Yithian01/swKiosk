@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, jsonify
 from flask_mysqldb import MySQL
 from json import JSONEncoder
-from datetime import datetime
+from datetime import datetime, timedelta
 import numpy, hashlib, os, logging, json, base64
 
 
@@ -142,7 +142,7 @@ def addManu():
 #메뉴 수정하기 기능
 # 메뉴 목록 API
 @app.route('/get_menus')
-def get_menus():
+def getMenus():
     try:
         cur = mysql.connection.cursor()
         sql = "SELECT * FROM menus"
@@ -153,9 +153,101 @@ def get_menus():
     
     except Exception as e:
         return f'메뉴 불러오기 중 오류가 발생했습니다: {str(e)}'
+    
+
+#----------------------- 매출 기능 -------------------------
+@app.route('/get_sales_by_month')
+def getSalesByMonth():
+    try:
+        cur = mysql.connection.cursor()
+        sql = "SELECT * FROM sales"
+        cur.execute(sql)
+        menus = cur.fetchall()
+        cur.close()
+        return jsonify(menus)
+    
+    except Exception as e:
+        return f'로그 불러오기 중 오류가 발생했습니다: {str(e)}'
+    
+@app.route('/getPrice/<int:menuId>')
+def getPrice(menuId):
+    try:
+        cur = mysql.connection.cursor()
+        sql = "SELECT price FROM menus WHERE id = %s"
+        cur.execute(sql, (menuId,))
+        menu_price = cur.fetchone()
+        cur.close()
+
+        if menu_price:
+            return jsonify({'price': menu_price[0]})
+        else:
+            return jsonify({'error': '메뉴를 찾을 수 없습니다.'}), 404
+    
+    except Exception as e:
+        return jsonify({'error': f'데이터베이스에서 가격을 가져오는 중 오류 발생: {str(e)}'}), 500
+
+
+# 오늘의 판매 현황을 반환하는 엔드포인트
+@app.route('/get_sales_for_today')
+def getSalesForToday():
+    # 오늘 날짜와 어제 날짜 구하기
+    todayDate = datetime.now().date()
+    yesterdayDate = todayDate - timedelta(days=1)
+
+    try:
+        # MySQL 연결
+        cur = mysql.connection.cursor()
+        
+        # 어제부터 오늘까지의 판매량과 매출액 조회 쿼리
+        sql = """
+        SELECT SUM(s.quan), SUM(s.quan * m.price) 
+        FROM sales s JOIN menus m ON s.menuId = m.id 
+        WHERE DATE(s.sellTime) BETWEEN %s AND %s
+        """
+        cur.execute(sql, (yesterdayDate, todayDate))
+        result = cur.fetchone()
+        cur.close()
+
+        print(result)
+
+        if result:
+            todaySalesQuantity = result[0] if result[0] else 0
+            todaySalesAmount = result[1] if result[1] else 0
+            return jsonify({'quantity': todaySalesQuantity, 'amount': todaySalesAmount}), 200
+        else:
+            return jsonify({'error': '오늘의 판매 데이터가 없습니다.'}), 404
+
+    except Exception as e:
+        return jsonify({'error': f'오늘의 판매 현황을 가져오는 중 오류 발생: {str(e)}'}), 500
 
 
 
+
+
+@app.route('/get_all_menu_sales')
+def get_all_menu_sales():
+    try:
+        # MySQL 연결
+        cur = mysql.connection.cursor()
+
+        sql = """
+            SELECT m.title AS menuName, SUM(s.quan) AS totalSales
+            FROM sales s
+            JOIN menus m ON s.menuId = m.id
+            GROUP BY m.title
+            ORDER BY totalSales DESC
+        """
+        cur.execute(sql)
+        results = cur.fetchall()
+        cur.close()
+
+        return jsonify(results)
+    except mysql.connector.Error as e:
+        return jsonify({'error': f'로그를 가져오는 중 오류 발생: {str(e)}'}), 500
+
+
+
+#---------------------------- 관리자 기능 -----------------------------------
 @app.route('/delete/<int:menu_id>/<int:kind>/<int:img>', methods=['DELETE'])
 def delete_menu(menu_id, kind, img):
     MENU = ['Caffeine', 'NonCaffeine', 'Desert']

@@ -1,43 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>관리자 페이지</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>관리자 페이지</title>
 </head>
 <body>
-    <header>관리자 페이지</header>
-    <div id="back-button">
-        <button><a href="./../index.html">메인 화면으로 가기</a></button>
-    </div>
-    
-    <div class='panel-container'>
-        <!-- 메뉴 추가하기 -->
-        <div class="panel">
-            <a href="./../add_page/addMenu.html">
-                <img src="./../res/Other/plus.jpg" alt="메뉴 추가하기">
-                <p>메뉴 추가하기</p>
-            </a>
-        </div>
-        
-        <!-- 메뉴 수정하기 -->
-        <div class="panel">
-            <a href="./../edit_page/editMenu.html">
-                <img src="./../res/Other/update.jpg" alt="메뉴 수정하기">
-                <p>메뉴 수정하기</p>
-            </a>
-        </div>
-        
-        <!-- 매출 현황 -->
-        <div class="panel">
-            <a href="./../report_page/salesReport.html">
-                <img src="./../res/Other/sale.jpg" alt="매출 현황">
-                <p>매출 현황</p>
-            </a>
-        </div>
-    </div>
+  <header>관리자 페이지</header>
+  
 
+    <div class="container"> 
+        <div class='panel-container'>
+            <div class="panel">
+                <a href="./../add_page/addMenu.html">
+                    <img src="./../res/Other/plus.jpg" alt="메뉴 추가하기">
+                <p>메뉴 추가하기</p></a>
+            </div>
+
+            <div class="panel">
+                <a href="./../edit_page/editMenu.html">
+                    <img src="./../res/Other/update.jpg" alt="메뉴 수정하기">
+                    <p>메뉴 수정하기</p>
+                </a>
+            </div>
+
+            <div class="panel">
+                <a href="./../report_page/salesReport.html">
+                    <img src="./../res/Other/sale.jpg" alt="매출 현황">
+                    <p>매출 현황</p>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div id="back-button">
+        <a href="./../index.html">메인 화면으로 가기</a>
+      </div>
 </body>
 <script>
 </script>

@@ -1,15 +1,173 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>매출 현황</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>매출 현황</title>
 </head>
 <body>
-    <header>매출 현황</header>
-    
-  
+  <header>
+    <h1>매출 현황</h1>
+  </header>
 
+  <div id="sales-data">
+    <h2>월별 매출 현황</h2>
+    <table id="sales-by-month">
+      <thead>
+        <tr>
+          <th>월</th>
+          <th>판매량</th>
+          <th>매출액</th>
+        </tr>
+      </thead>
+      <tbody id="sales-by-month-body"></tbody>
+    </table>
+
+    <h2>오늘의 판매 현황</h2>
+    <div id="today-sales">
+      <p id="today-sales-quantity">오늘 판매량: 로딩 중...</p>
+      <p id="today-sales-amount">오늘 매출액: 로딩 중...</p>
+    </div>
+
+    <h2>전체 메뉴 판매 현황</h2>
+    <table id="all-menu-sales">
+        <thead>
+            <tr>
+                <th>메뉴 이름</th>
+                <th>총 판매량</th>
+            </tr>
+        </thead>
+        <tbody id="all-menu-sales-body">
+            <!-- 여기에 모든 메뉴 판매 현황 데이터가 자동으로 채워질 예정입니다 -->
+        </tbody>
+    </table>
+
+    
+  </div>
+
+  <div id="back-button" onclick="goBack()">
+    뒤로 가기
+  </div>
+
+<script>
+  // Extract the month from the date string
+  function extractMonth(dateString) {
+    const date = new Date(dateString);
+    return date.getMonth() + 1; // 월은 0부터 시작하므로 +1
+  }
+
+  // 서버에서 월별 매출 데이터를 가져오는 함수
+  function fetchSalesByMonth() {
+    const salesByMonthBody = document.getElementById('sales-by-month-body');
+    salesByMonthBody.innerHTML = ''; // 테이블 초기화
+    
+    // 1월부터 12월까지 반복
+    for (let month = 1; month <= 12; month++) {
+      let row = `<tr>
+        <td>${month}</td>
+        <td>0</td> 
+        <td>0</td> 
+      </tr>`;
+      salesByMonthBody.innerHTML += row;
+    }
+
+    fetch('/get_sales_by_month')
+      .then(response => response.json())
+      .then(data => {
+        // 서버에서 가져온 데이터로 테이블 채우기
+        let promises = data.map(monthData => {
+          let logMonth = monthData[1]; // 월 추출
+          let menuId = parseInt(monthData[2]); // 메뉴아이디 추출
+          let quantity = parseInt(monthData[3]); // 개수 추출
+
+          // 메뉴의 가격을 가져오는 요청
+          return fetch(`/getPrice/${menuId}`)
+            .then(response => response.json())
+            .then(menuPrice => {
+              const price = menuPrice['price']; // "price" 키를 사용하여 가격 값 추출
+              const month = extractMonth(logMonth); // 월 변환
+
+              // 해당 월의 행을 찾아 판매량 및 매출액 업데이트
+              let row = salesByMonthBody.querySelector(`tr:nth-child(${month})`);
+              if (row) {
+                let curQuan = parseInt(row.cells[1].textContent);
+                let curAmount = parseInt(row.cells[2].textContent);
+
+                row.cells[1].textContent = curQuan + quantity;
+                row.cells[2].textContent = curAmount + (quantity * price);
+              }
+            })
+            .catch(error => console.log("가격 불러오기 실패: ", error));
+        });
+
+        // 모든 비동기 작업이 완료될 때까지 기다린 후 테이블을 업데이트
+        Promise.all(promises)
+        .then(() => console.log("모든 가격 업데이트 완료"))
+        .catch(error => console.error('가격 업데이트 오류:', error));
+        })
+        .catch(error => console.error('월별 매출 데이터 가져오기 오류:', error));
+    }
+
+    // 오늘의 판매 현황을 가져오는 함수
+    function fetchSalesForToday() {
+        fetch('/get_sales_for_today')
+        .then(response => response.json())
+        .then(data => {
+
+            console.log(data);
+
+            if (data.quantity !== undefined && data.amount !== undefined) {
+                const todaySalesQuantity = data.quantity;
+                const todaySalesAmount = data.amount;
+
+                console.log(`todaySalesQuantity: ${todaySalesQuantity}`);
+                console.log(`todaySalesAmount: ${todaySalesAmount}`);
+
+                document.getElementById('today-sales-quantity').textContent = `오늘 판매량: ${todaySalesQuantity} 개`;
+                document.getElementById('today-sales-amount').textContent = `오늘 매출액: ${todaySalesAmount} 원`;
+            } else {
+
+                console.error('오늘의 판매 현황 데이터가 없습니다.');
+            }
+        })
+        .catch(error => console.error('오늘의 판매 현황 가져오기 오류:', error));
+    }
+
+
+
+    // 서버에서 모든 메뉴의 총 판매량 데이터를 가져오는 함수
+    function fetchAllMenuSales() {
+        const allMenuSalesBody = document.getElementById('all-menu-sales-body');
+        allMenuSalesBody.innerHTML = ''; // 테이블 초기화
+
+        fetch('/get_all_menu_sales') // 가정: 이 엔드포인트는 모든 메뉴의 총 판매량 데이터를 반환합니다
+        .then(response => response.json())
+        .then(data => {
+
+            data.forEach(item => {
+                console.log(`item : ${item}`);
+                let row = `<tr>
+                    <td>${item[0]}</td>
+                    <td>${item[1]}</td>
+                </tr>`;
+                allMenuSalesBody.innerHTML += row;
+            });
+        })
+        .catch(error => console.error('전체 메뉴 판매 현황 데이터 가져오기 오류:', error));
+    }
+
+    // 페이지 로드 후 실행할 함수
+    window.onload = function() {
+        fetchSalesByMonth(); // 월별 매출 데이터 가져오기
+        fetchSalesForToday(); // 오늘의 판매 현황 가져오기
+        fetchAllMenuSales(); // 팔린 메뉴 보기    
+    };
+
+    // 뒤로 가기 함수
+    function goBack() {
+        window.history.back();
+    }
+</script>
 </body>
 </html>

@@ -1,79 +1,114 @@
 @charset "utf-8";
 @font-face {
-    font-family: NG;
-    src: local(※), url(NanumGothic.woff) format("woff");
+  font-family: NG;
+  src: local(※), url(NanumGothic.woff) format("woff");
 }
 
 body {
-    line-height: 1;
-    font-family: NG, sans-serif;
-    -webkit-text-size-adjust: none;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    font: normal NG;
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #f5f6fa;
+  line-height: 1;
+  font-family: NG, sans-serif;
+  -webkit-text-size-adjust: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  font: normal NG;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #f5f6fa;
 }
 
 a:hover,
 a:visited,
 a:link,
 a:active {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 html,
 body {
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #f5f6fa;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #f5f6fa;
 }
 
 header {
-    background-color: dodgerblue;
-    line-height: 40px;
-    color: white;
-    text-align: center;
-    font-weight: bold;
-    font-size: 23px;
-    position: relative;
-    margin: 0 auto;
-    max-width: 800px;
-    height: 40px;
+  background-color: #ff8c00;
+  line-height: 40px;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  font-size: 23px;
+  position: relative;
+  margin: 0 auto;
+  max-width: 800px;
+  height: 40px;
 }
 
 #back-button {
-    text-align: center;
-    margin-top: 10px;
+  text-align: center;
+  margin-top: 10px;
+  background-color: #ff8c00;
+  line-height: 40px;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  font-size: 23px;
+  position: relative;
+  margin: 0 auto;
+  max-width: 800px;
+  height: 40px;
+}
+
+#back-button button {
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#back-button button:hover {
+  background-color: #45a049;
 }
 
 .panel-container {
-    display: flex;
-    justify-content: space-between; /* 가로로 공간을 최대한 분배하여 배치 */
-    max-width: 780px;
-    margin: 0 auto;
-    margin-top: 20px;
+  background-color: #98cf99;
+  padding: 10px;
+  width: 800px;
+  height: 950px;
+  display: flex;
+  justify-content: space-between; /* 가로로 공간을 최대한 분배하여 배치 */
+  max-width: 780px;
+  margin: 0 auto;
+  margin-top: 20px;
 }
 
 .panel {
-    width: calc(33.33% - 10px); /* 3등분을 위해 33.33%로 설정, 여백은 gap 속성으로 조절 */
-    border: 1px solid #ccc;
-    text-align: center;
+  width: calc(33.33% - 10px); /* 3등분을 위해 33.33%로 설정, 여백은 gap 속성으로 조절 */
+  height: 200px;
+  border: 1px solid #ccc;
+  text-align: center;
+  cursor: pointer; /* 클릭 시 포인터 모양 변경 */
 }
 
 .panel img {
-    width: 100%;
-    height: 200px;
-    display: block;
+  width: 100%;
+  height: 200px;
+  display: block;
 }
 
 .panel p {
-    background-color: blue;
-    color: white;
-    margin: 0;
-    padding: 10px;
+  background-color: #ff8c00;
+  color: white;
+  margin: 0;
+  padding: 10px;
+}
+
+.panel:hover {
+  background-color: #4CAF50; /* 초록색 버튼 색상 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* hover 시 그림자 효과 */
 }
