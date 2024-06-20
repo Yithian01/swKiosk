@@ -280,7 +280,7 @@
     function fetchMenus(kind) {
         const NAME = ['Caffeine', 'NonCaffeine', 'Desert'];
         
-        fetch('/get_menus') // Flask 애플리케이션의 라우트 주소에 맞게 수정
+        fetch('/getMenus') // Flask 애플리케이션의 라우트 주소에 맞게 수정
         .then(response => response.json())
         .then(data => {
             const panelContainer = document.getElementById('panelContainer');

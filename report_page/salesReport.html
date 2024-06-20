@@ -72,7 +72,7 @@
       salesByMonthBody.innerHTML += row;
     }
 
-    fetch('/get_sales_by_month')
+    fetch('/getSalesByMonth')
       .then(response => response.json())
       .then(data => {
         // 서버에서 가져온 데이터로 테이블 채우기
@@ -111,7 +111,7 @@
 
     // 오늘의 판매 현황을 가져오는 함수
     function fetchSalesForToday() {
-        fetch('/get_sales_for_today')
+        fetch('/getSalesForToday')
         .then(response => response.json())
         .then(data => {
 
@@ -141,7 +141,7 @@
         const allMenuSalesBody = document.getElementById('all-menu-sales-body');
         allMenuSalesBody.innerHTML = ''; // 테이블 초기화
 
-        fetch('/get_all_menu_sales') // 가정: 이 엔드포인트는 모든 메뉴의 총 판매량 데이터를 반환합니다
+        fetch('/getAllMenuSales') // 가정: 이 엔드포인트는 모든 메뉴의 총 판매량 데이터를 반환합니다
         .then(response => response.json())
         .then(data => {
 

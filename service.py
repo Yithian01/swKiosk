@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 import numpy, hashlib, os, logging, json, base64
 
 
-
 app = Flask(
     __name__,
     static_url_path='',
@@ -141,7 +140,7 @@ def addManu():
 #--------------------------------------------------
 #메뉴 수정하기 기능
 # 메뉴 목록 API
-@app.route('/get_menus')
+@app.route('/getMenus')
 def getMenus():
     try:
         cur = mysql.connection.cursor()
@@ -156,7 +155,7 @@ def getMenus():
     
 
 #----------------------- 매출 기능 -------------------------
-@app.route('/get_sales_by_month')
+@app.route('/getSalesByMonth')
 def getSalesByMonth():
     try:
         cur = mysql.connection.cursor()
@@ -188,7 +187,7 @@ def getPrice(menuId):
 
 
 # 오늘의 판매 현황을 반환하는 엔드포인트
-@app.route('/get_sales_for_today')
+@app.route('/getSalesForToday')
 def getSalesForToday():
     # 오늘 날짜와 어제 날짜 구하기
     todayDate = datetime.now().date()
@@ -221,11 +220,8 @@ def getSalesForToday():
         return jsonify({'error': f'오늘의 판매 현황을 가져오는 중 오류 발생: {str(e)}'}), 500
 
 
-
-
-
-@app.route('/get_all_menu_sales')
-def get_all_menu_sales():
+@app.route('/getAllMenuSales')
+def getAllMenuSales():
     try:
         # MySQL 연결
         cur = mysql.connection.cursor()
