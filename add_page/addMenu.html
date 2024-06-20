@@ -66,6 +66,11 @@
 
         const imgFile = document.getElementById('menuImage').files[0];
 
+        if (!imgFile) {
+            alert('이미지를 넣어주세요');
+        return;
+        }
+
         const kind = document.getElementById('menuKind').value;
         const title = document.getElementById('menuTitle').value;
         const price = document.getElementById('menuPrice').value;

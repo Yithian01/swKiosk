@@ -54,7 +54,7 @@
                         <input type="radio" name="temperature" value="hot"> 핫
                     </label>
                     <label>
-                        <input type="radio" name="temperature" value="ice"> 아이스
+                        <input type="radio" name="temperature" value="ice" checked> 아이스
                     </label>
                     <h3 id="NutInfo">영양정보: </h3>
                     <p id="caffeineInfo">카페인: </p>
@@ -261,8 +261,6 @@
 
     };
 
-
-
     //---------------------------------------------------------
     // 모든 메뉴 아이템의 'active' 클래스를 제거하고 클릭된 항목에 추가합니다.
     function change(kind) {
@@ -309,7 +307,7 @@
 
     // 뒤로 가기 함수
     function goBack() {
-            window.history.back();
+        window.location.href = './../index.html';
     }
 
    
